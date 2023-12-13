@@ -2,7 +2,6 @@
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
-(package-refresh-contents)
 
 (use-package evil
   :config
@@ -28,6 +27,9 @@
 (use-package json-ts-mode
   :config
   (add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode)))
+(use-package typescript-ts-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode)))
 
 ;; Custom options
 (setq indent-tabs-mode nil)
@@ -41,8 +43,9 @@
 
 ;; TreeSitter
 (setq treesit-language-source-alist
-      '((json "https://github.com/tree-sitter/tree-sitter-json")))
-
+      '((json "https://github.com/tree-sitter/tree-sitter-json")
+       (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+       (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
