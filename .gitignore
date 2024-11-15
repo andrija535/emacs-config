@@ -4,3 +4,7 @@ elpa
 transient
 *~
 session.*
+projects    
+tree-sitter
+vue-ts-mode
+opam-user-setup.el
