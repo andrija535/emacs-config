@@ -7,3 +7,4 @@ session.*
 projects    
 tree-sitter
 opam-user-setup.el
+vue-ts-mode
