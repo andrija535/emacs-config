@@ -56,7 +56,16 @@
           #'visual-line-mode)
 
 ;; Org roam
-(org-roam-db-autosync-mode)
+(let ((org-roam-default-directory (file-truename "~/org-roam")))
+  (progn
+    ;; Create org-roam directory if it doesn't already exist
+    (if
+        (not (file-exists-p org-roam-default-directory))
+        (make-directory org-roam-default-directory))
+    ;; Set it as default
+    (setq org-roam-directory org-roam-default-directory)
+    ;; Turn on autosync mode, if we don't do the above it crashes on startup
+    (org-roam-db-autosync-mode)))
 
 ;; For ocamlrpc
 (add-to-list 'load-path "/home/andrija/.opam/5.2.0/share/emacs/site-lisp")
