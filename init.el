@@ -47,13 +47,22 @@
 (keymap-global-set "C-c l" #'default-code-layout)
 
 ;; Org mode
+(defun insert-babel-code-block (language session)
+  (interactive "MLanguage: \nMSession: ")
+  (save-excursion
+    (if (not (string= session ""))
+        (insert (format "#+BEGIN_SRC %s :session %s\n\n#+END_SRC" language session))
+      (insert (format "#+BEGIN_SRC %s\n\n#+END_SRC" language)))))
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((python t)))
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i --simple-prompt")
 (add-hook 'org-mode-hook
-          #'visual-line-mode)
+          (lambda ()
+            (visual-line-mode)
+            (keymap-set org-mode-map "C-c b i" #'insert-babel-code-block)))
 
 ;; Org roam
 (org-roam-db-autosync-mode)
