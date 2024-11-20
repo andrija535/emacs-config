@@ -8,3 +8,5 @@ projects
 tree-sitter
 opam-user-setup.el
 vue-ts-mode
+org-roam.db
+eshell
