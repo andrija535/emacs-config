@@ -39,8 +39,8 @@
   :ensure t
   :config (add-hook 'org-mode-hook
                     (lambda () (progn
-                                 (keymap-set org-mode-map "C-c C-n f" 'org-roam-node-find)
-                                 (keymap-set org-mode-map "C-c C-n i" 'org-roam-node-insert)))))
+                                 (keymap-set org-mode-map "C-c n f" 'org-roam-node-find)
+                                 (keymap-set org-mode-map "C-c n i" 'org-roam-node-insert)))))
 
 ;; Custom options
 (setq-default indent-tabs-mode nil)
@@ -118,6 +118,7 @@
  '(mailcap-user-mime-data '(("xdg-open %s" "application/pdf")))
  '(omnisharp-server-executable-path
    "/home/andrija/Downloads/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe")
+ '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
    '(org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes typescript-mode php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
  '(safe-local-variable-values
