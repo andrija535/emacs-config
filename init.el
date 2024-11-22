@@ -64,6 +64,15 @@
             (visual-line-mode)
             (keymap-set org-mode-map "C-c b i" #'insert-babel-code-block)))
 
+(defun convert-org-to-docx ()
+  (interactive)
+  (shell-command
+   (format "pandoc --from org --to docx %s -o %s"
+           (buffer-file-name)
+           (format "%s-%s.docx"
+                   (file-name-sans-extension (buffer-file-name))
+                   (format-time-string "%Y-%m-%d-%H%M%S")))))
+
 ;; Org roam
 (let ((org-roam-default-directory (file-truename "~/org-roam")))
   (progn
