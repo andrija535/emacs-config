@@ -147,6 +147,11 @@
     ;; and use one of its "OPSW" menus.
     ))
 
+(defun my-eshell-remove-pcomplete ()
+  (remove-hook 'completion-at-point-functions #'pcomplete-completions-at-point t))
+
+(add-hook 'eshell-mode-hook #'my-eshell-remove-pcomplete)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
