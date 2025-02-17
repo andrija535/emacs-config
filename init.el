@@ -10,6 +10,8 @@
   :ensure t)
 (use-package tuareg
   :ensure t)
+(use-package opam-switch-mode
+  :ensure t)
 (use-package modus-themes
   :ensure t)
 (use-package magit
@@ -176,7 +178,7 @@
  '(org-agenda-files '("/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
-   '(auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes typescript-mode php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
+   '(opam-switch-mode auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes typescript-mode php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
