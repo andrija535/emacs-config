@@ -152,7 +152,25 @@
 (defun my-eshell-remove-pcomplete ()
   (remove-hook 'completion-at-point-functions #'pcomplete-completions-at-point t))
 
-(add-hook 'eshell-mode-hook #'my-eshell-remove-pcomplete)
+(defun my-eshell-add-pcomplete ()
+  (add-hook 'completion-at-point-functions #'pcomplete-completions-at-point nil t))
+
+(defun my-eshell-toggle-pcomplete ()
+  (interactive)
+  (if pcomplete-turned-on
+      (progn
+        (my-eshell-remove-pcomplete)
+        (setq-local pcomplete-turned-on nil)
+        (message "Turned off pcomplete"))
+    (progn
+      (my-eshell-add-pcomplete)
+      (setq-local pcomplete-turned-on t)
+      (message "Turned on pcomplete"))))
+
+(add-hook 'eshell-mode-hook
+          (lambda ()
+            (setq-local pcomplete-turned-on t)
+            (keymap-local-set "C-c a" #'my-eshell-toggle-pcomplete)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
