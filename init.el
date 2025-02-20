@@ -167,6 +167,12 @@
       (setq-local pcomplete-turned-on t)
       (message "Turned on pcomplete"))))
 
+;; For some reason, pcomplete triest to rewrite eshell subcommands, so typing e.g.
+;; { echo "a" } will insert "a" into the shell. While that one is just annoying, it
+;; actually ends up breaking the shell when the subcommand inside blocks expecting
+;; input, like it happened to me when using { wc $file -l } before $file had a value.
+;; I haven't figured out how to disable that behaviour but this at least lets me toggle
+;; it when I know I will be using subcommands
 (add-hook 'eshell-mode-hook
           (lambda ()
             (setq-local pcomplete-turned-on t)
