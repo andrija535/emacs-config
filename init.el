@@ -152,7 +152,31 @@
 (defun my-eshell-remove-pcomplete ()
   (remove-hook 'completion-at-point-functions #'pcomplete-completions-at-point t))
 
-(add-hook 'eshell-mode-hook #'my-eshell-remove-pcomplete)
+(defun my-eshell-add-pcomplete ()
+  (add-hook 'completion-at-point-functions #'pcomplete-completions-at-point nil t))
+
+(defun my-eshell-toggle-pcomplete ()
+  (interactive)
+  (if pcomplete-turned-on
+      (progn
+        (my-eshell-remove-pcomplete)
+        (setq-local pcomplete-turned-on nil)
+        (message "Turned off pcomplete"))
+    (progn
+      (my-eshell-add-pcomplete)
+      (setq-local pcomplete-turned-on t)
+      (message "Turned on pcomplete"))))
+
+;; For some reason, pcomplete triest to rewrite eshell subcommands, so typing e.g.
+;; { echo "a" } will insert "a" into the shell. While that one is just annoying, it
+;; actually ends up breaking the shell when the subcommand inside blocks expecting
+;; input, like it happened to me when using { wc $file -l } before $file had a value.
+;; I haven't figured out how to disable that behaviour but this at least lets me toggle
+;; it when I know I will be using subcommands
+(add-hook 'eshell-mode-hook
+          (lambda ()
+            (setq-local pcomplete-turned-on t)
+            (keymap-local-set "C-c a" #'my-eshell-toggle-pcomplete)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
