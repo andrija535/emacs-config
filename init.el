@@ -208,7 +208,8 @@
  '(safe-local-variable-values
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
  '(sgml-basic-offset 4)
- '(typescript-ts-mode-indent-offset 4))
+ '(typescript-ts-mode-indent-offset 4)
+ '(web-mode-code-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
