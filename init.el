@@ -69,7 +69,9 @@
                                (visual-line-mode)))
   (setq-default TeX-master nil))
 (use-package typst-ts-mode
-  :ensure t)
+  :ensure t
+  :config
+  (add-hook 'typst-ts-mode-hook #'visual-line-mode))
 
 ;; Custom options
 (setq-default indent-tabs-mode nil)
