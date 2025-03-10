@@ -215,7 +215,7 @@
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
  '(sgml-basic-offset 4)
  '(typescript-ts-mode-indent-offset 4)
- '(typst-ts-mode-indent-offset 2))
+ '(typst-ts-mode-indent-offset 2)
  '(web-mode-code-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
