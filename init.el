@@ -5,9 +5,8 @@
 
 ;; Packages
 (use-package evil
-  :config
-  (evil-mode 1)
-  :ensure t)
+  :ensure t
+  :config (evil-mode 1))
 (use-package tuareg
   :ensure t)
 (use-package opam-switch-mode
@@ -19,13 +18,13 @@
 (use-package kaolin-themes
   :ensure t)
 (use-package json-ts-mode
-  :config
-  :mode
-  (("\\.json\\'" . json-ts-mode)))
+  :ensure t
+  :mode (("\\.json\\'" . json-ts-mode)))
 (use-package typescript-ts-mode
-  :config
-  :mode
-  (("\\.ts\\'" . typescript-ts-mode)))
+  :ensure t
+  :requires eglot
+  :hook (typescript-ts-mode . eglot-ensure)
+  :mode (("\\.ts\\'" . typescript-ts-mode)))
 (use-package company
   :ensure t
   :config
@@ -39,45 +38,13 @@
 (use-package auto-dark
   :ensure t
   :config (auto-dark-mode))
-(use-package org-roam
-  :ensure t
-  :config (add-hook 'org-mode-hook
-                    (lambda () (progn
-                                 (keymap-set org-mode-map "C-c n f" 'org-roam-node-find)
-                                 (keymap-set org-mode-map "C-c n i" 'org-roam-node-insert)))))
-(use-package web-mode
-  :ensure t
-  :mode
-  (("\\.php\\'" . web-mode)))
-(use-package eglot
-  :ensure t
-  :config
-  (add-to-list 'eglot-server-programs
-               '((typescript-mode) "typescript-language-server" "--stdio"))
-  (add-hook 'typescript-ts-mode-hook 'eglot-ensure))
-(use-package solo-jazz-theme
-  :ensure t
-  :config
-  (load-theme 'solo-jazz t))
-(use-package ess
-  :ensure t)
-(use-package auctex
-  :ensure t
-  :config
-  (add-hook 'LaTeX-mode-hook (lambda ()
-                               (turn-on-reftex)
-                               (visual-line-mode)))
-  (setq-default TeX-master nil))
-(use-package typst-ts-mode
-  :ensure t
-  :config
-  (add-hook 'typst-ts-mode-hook #'visual-line-mode))
 
-;; Custom options
-(setq-default indent-tabs-mode nil)
-(keymap-global-set "C-c l" #'default-code-layout)
+(defun org-count-words-selection ()
+  (interactive)
+  (let ((b (region-beginning))
+        (e (region-end)))
+    (message (format "%d" (length (split-string (buffer-substring b e)))))))
 
-;; Org mode
 (defun insert-babel-code-block (language session)
   (interactive "MLanguage: \nMSession: ")
   (save-excursion
@@ -85,37 +52,71 @@
         (insert (format "#+BEGIN_SRC %s :session %s\n\n#+END_SRC" language session))
       (insert (format "#+BEGIN_SRC %s\n\n#+END_SRC" language)))))
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python t)))
+(use-package org
+  :config (lambda ()
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((python t))))
+  :hook (org-mode . visual-line-mode)
+  :bind (:map org-mode-map
+              ("C-c b i" . insert-babel-code-block)
+              ("C-c w c" . org-count-words-selection)))
+  
+(defun init-org-roam-dir ()
+  (let ((org-roam-default-directory (file-truename "~/org-roam")))
+    (progn
+      ;; Create org-roam directory if it doesn't already exist
+      (if
+          (not (file-exists-p org-roam-default-directory))
+          (make-directory org-roam-default-directory))
+      ;; Set it as default
+      (setq org-roam-directory org-roam-default-directory)
+      ;; Turn on autosync mode, if we don't do the above it crashes on startup
+      (org-roam-db-autosync-mode))))
+
+(use-package org-roam
+  :ensure t
+  :init #'init-org-roam-dir
+  :bind (:map org-mode-map
+              ("C-c n f" . org-roam-node-find)
+              ("C-c n i" . org-roam-node-insert)))
+
+(use-package web-mode
+  :ensure t
+  :mode (("\\.php\\'" . web-mode)))
+
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs
+               '((typescript-ts-mode) "typescript-language-server" "--stdio")))
+
+(use-package solo-jazz-theme
+  :ensure t
+  :config
+  (load-theme 'solo-jazz t))
+(use-package ess
+  :ensure t)
+
+(use-package auctex
+  :ensure t
+  :config (setq-default TeX-master nil)
+  :hook ((LaTeX-mode . turn-on-reftex)
+         (LaTeX-mode . visual-line-mode)))
+
+(use-package typst-ts-mode
+  :ensure t
+  :hook (typst-ts-mode . visual-line-mode))
+
+(use-package rust-mode
+  :ensure t)
+
+;; Custom options
+(setq-default indent-tabs-mode nil)
+(keymap-global-set "C-c l" #'default-code-layout)
+
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i --simple-prompt")
-(add-hook 'org-mode-hook
-          (lambda ()
-            (visual-line-mode)
-            (keymap-set org-mode-map "C-c b i" #'insert-babel-code-block)))
-
-(defun convert-org-to-docx ()
-  (interactive)
-  (shell-command
-   (format "pandoc --from org --to docx %s -o %s"
-           (buffer-file-name)
-           (format "%s-%s.docx"
-                   (file-name-sans-extension (buffer-file-name))
-                   (format-time-string "%Y-%m-%d-%H%M%S")))))
-
-;; Org roam
-(let ((org-roam-default-directory (file-truename "~/org-roam")))
-  (progn
-    ;; Create org-roam directory if it doesn't already exist
-    (if
-        (not (file-exists-p org-roam-default-directory))
-        (make-directory org-roam-default-directory))
-    ;; Set it as default
-    (setq org-roam-directory org-roam-default-directory)
-    ;; Turn on autosync mode, if we don't do the above it crashes on startup
-    (org-roam-db-autosync-mode)))
-
 
 ;; For ocamlrpc
 ;; Condition case because this breaks every time I updated emacs and it was
@@ -209,7 +210,7 @@
  '(org-agenda-files '("/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
-   '(typst-ts-mode opam-switch-mode auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes typescript-mode php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
+   '(rust-mode typst-ts-mode opam-switch-mode auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
