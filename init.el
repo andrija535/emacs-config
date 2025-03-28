@@ -35,9 +35,32 @@
   (exec-path-from-shell-initialize))
 (use-package pyvenv
   :ensure t)
+
+;; Set appropriate colour scheme on startup
+
+(defcustom default-dark-theme 'kaolin-aurora "Default dark theme to use for example with auto-dark mode but also on startup")
+(defcustom default-light-theme 'modus-operandi-tinted "Default light theme to use for example with auto-dark mode but also on startup")
+
+(defun set-startup-colour-scheme ()
+  (let
+      ((is-dark (eq 1 (caar (dbus-ignore-errors
+                              (dbus-call-method
+                               :session
+                               "org.freedesktop.portal.Desktop"
+                               "/org/freedesktop/portal/desktop"
+                               "org.freedesktop.portal.Settings" "Read"
+                               "org.freedesktop.appearance" "color-scheme"))))))
+    (load-theme (if is-dark default-dark-theme default-light-theme) t)))
+
+(setq custom-safe-themes t)
+(add-hook 'after-init-hook #'set-startup-colour-scheme)
+
 (use-package auto-dark
   :ensure t
-  :config (auto-dark-mode))
+  :config (progn
+            (set-variable 'auto-dark-themes (list (list default-dark-theme) (list default-light-theme)))
+            (auto-dark-mode)))
+
 (use-package typst-ts-mode
   :ensure t)
 
@@ -55,7 +78,7 @@
       (insert (format "#+BEGIN_SRC %s\n\n#+END_SRC" language)))))
 
 (use-package org
-  :config (lambda ()
+  :config (progn
             (org-babel-do-load-languages
              'org-babel-load-languages
              '((python t))))
@@ -192,7 +215,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(auto-dark-themes '((kaolin-aurora) (modus-operandi-tinted)))
  '(c-basic-offset 4)
  '(c-default-style
    '((c-mode . "bsd")
