@@ -68,6 +68,8 @@
                                (turn-on-reftex)
                                (visual-line-mode)))
   (setq-default TeX-master nil))
+(use-package typst-ts-mode
+  :ensure t)
 
 ;; Custom options
 (setq-default indent-tabs-mode nil)
@@ -129,7 +131,8 @@
        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
        (vue "https://github.com/ikatyang/tree-sitter-vue")
        (css "https://github.com/tree-sitter/tree-sitter-css")
-       (c "https://github.com/tree-sitter/tree-sitter-c")))
+       (c "https://github.com/tree-sitter/tree-sitter-c")
+       (typst "https://github.com/uben0/tree-sitter-typst")))
 
 ;; Merlin
 (let ((opam-share (ignore-errors (car (process-lines "opam" "var"
@@ -201,15 +204,17 @@
  '(mailcap-user-mime-data '(("xdg-open %s" "application/pdf")))
  '(omnisharp-server-executable-path
    "/home/andrija/Downloads/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe")
- '(org-agenda-files '("/home/andrija/agenda.org"))
+ '(org-agenda-files
+   '("~/Documents/school/ipcv/home_assignment/main.org" "/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
-   '(opam-switch-mode auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes typescript-mode php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
+   '(typst-ts-mode opam-switch-mode auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes typescript-mode php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
  '(sgml-basic-offset 4)
  '(typescript-ts-mode-indent-offset 4)
+ '(typst-ts-mode-indent-offset 2)
  '(web-mode-code-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
