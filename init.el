@@ -3,13 +3,20 @@
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
 
+;; Eshell
+(add-hook 'eshell-mode-hook (lambda ()
+                              (setq-local corfu-auto nil)
+                              (corfu-mode)))
+
 ;; Packages
 (use-package evil
   :ensure t
   :config (evil-mode 1))
 (use-package tuareg
+  :commands (tuareg-mode)
   :ensure t)
 (use-package opam-switch-mode
+  :after tuareg
   :ensure t)
 (use-package modus-themes
   :ensure t)
@@ -18,15 +25,17 @@
 (use-package kaolin-themes
   :ensure t)
 
+;; Treesitter
 (use-package json-ts-mode
+  :commands (json-ts-mode)
   :ensure t)
 (use-package typescript-ts-mode
-  :ensure t
-  :requires eglot
-  :hook (typescript-ts-mode . eglot-ensure))
+  :commands (typescript-ts-mode)
+  :ensure t)
 (use-package typst-ts-mode
   :ensure t
-  :hook (typst-ts-mode . visual-line-mode))
+  :commands (typst-ts-mode)
+  :config (add-hook 'typst-ts-mode-hook visual-line-mode))
 
 (use-package treesit
   :mode (("\\.tsx\\'" . tsx-ts-mode)
@@ -112,8 +121,8 @@
   :config (progn
             (org-babel-do-load-languages
              'org-babel-load-languages
-             '((python t))))
-  :hook (org-mode . visual-line-mode)
+             '((python t)))
+            (add-hook 'org-mode-hook visual-line-mode))
   :bind (:map org-mode-map
               ("C-c b i" . insert-babel-code-block)
               ("C-c w c" . org-count-words-selection)))
@@ -143,6 +152,7 @@
 
 (use-package eglot
   :ensure t
+  :hook (typescript-ts-mode . eglot-ensure)
   :config
   (add-to-list 'eglot-server-programs
                '((typescript-ts-mode) "typescript-language-server" "--stdio")))
@@ -153,15 +163,20 @@
   (load-theme 'solo-jazz t))
 
 (use-package ess
+  :commands ess-mode
   :ensure t)
 
 (use-package auctex
   :ensure t
-  :config (setq-default TeX-master nil)
-  :hook ((LaTeX-mode . turn-on-reftex)
-         (LaTeX-mode . visual-line-mode)))
+  :commands (LaTeX-mode)
+  :config (progn
+            (setq-default TeX-master nil)
+            (add-hook 'LaTeX-mode-hook (lambda ()
+                                         (turn-on-reftex)
+                                         (visual-line-mode)))))
 
 (use-package rust-mode
+  :commands (rust-mode)
   :ensure t)
 
 ;; Custom options
@@ -180,10 +195,6 @@
       (require 'ocp-indent))
   (error nil))
 
-;; TreeSitter
-(setq treesit-language-source-alist
-      ')
-
 ;; Merlin
 (let ((opam-share (ignore-errors (car (process-lines "opam" "var"
                                                      "share")))))
@@ -201,10 +212,6 @@
     ;; install the minor mode https://github.com/ProofGeneral/opam-switch-mode
     ;; and use one of its "OPSW" menus.
     ))
-
-(add-hook 'eshell-mode-hook (lambda ()
-                              (setq-local corfu-auto nil)
-                              (corfu-mode)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
