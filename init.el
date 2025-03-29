@@ -49,8 +49,10 @@
                                "org.freedesktop.portal.Desktop"
                                "/org/freedesktop/portal/desktop"
                                "org.freedesktop.portal.Settings" "Read"
-                               "org.freedesktop.appearance" "color-scheme"))))))
-    (load-theme (if is-dark default-dark-theme default-light-theme) t)))
+                               "org.freedesktop.appearance" "color-scheme")))))
+       (enabled-themes custom-enabled-themes))
+    (load-theme (if is-dark default-dark-theme default-light-theme) t)
+    (dolist (theme enabled-themes) (disable-theme theme))))
 
 (setq custom-safe-themes t)
 (add-hook 'after-init-hook #'set-startup-colour-scheme)
