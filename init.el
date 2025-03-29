@@ -17,18 +17,50 @@
   :ensure t)
 (use-package kaolin-themes
   :ensure t)
+
 (use-package json-ts-mode
-  :ensure t
-  :mode (("\\.json\\'" . json-ts-mode)))
+  :ensure t)
 (use-package typescript-ts-mode
   :ensure t
   :requires eglot
-  :hook (typescript-ts-mode . eglot-ensure)
-  :mode (("\\.ts\\'" . typescript-ts-mode)))
-(use-package company
+  :hook (typescript-ts-mode . eglot-ensure))
+(use-package typst-ts-mode
   :ensure t
+  :hook (typst-ts-mode . visual-line-mode))
+
+(use-package treesit
+  :mode (("\\.tsx\\'" . tsx-ts-mode)
+         ("\\.js\\'"  . typescript-ts-mode)
+         ("\\.mjs\\'" . typescript-ts-mode)
+         ("\\.mts\\'" . typescript-ts-mode)
+         ("\\.cjs\\'" . typescript-ts-mode)
+         ("\\.ts\\'"  . typescript-ts-mode)
+         ("\\.jsx\\'" . tsx-ts-mode)
+         ("\\.json\\'" .  json-ts-mode))
+  :preface
+  (defun setup-treesitter ()
+    (interactive)
+    (dolist (grammar
+             ((json "https://github.com/tree-sitter/tree-sitter-json")
+              (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+              (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+              (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+              (vue "https://github.com/ikatyang/tree-sitter-vue")
+              (css "https://github.com/tree-sitter/tree-sitter-css")
+              (c "https://github.com/tree-sitter/tree-sitter-c")
+              (typst "https://github.com/uben0/tree-sitter-typst")))
+      (add-to-list 'treesit-language-source-alist grammar)
+      (let ((grammar (car grammar)))
+        (unless (treesit-language-available-p grammar)
+          (treesit-install-language-grammar grammar)))))
   :config
-  (global-company-mode))
+  (setup-treesitter))
+
+(setq tab-always-indent 'complete)
+
+(use-package corfu
+  :ensure t
+  :config (global-corfu-mode))
 (use-package exec-path-from-shell
   :ensure t
   :config
@@ -62,9 +94,6 @@
   :config (progn
             (set-variable 'auto-dark-themes (list (list default-dark-theme) (list default-light-theme)))
             (auto-dark-mode)))
-
-(use-package typst-ts-mode
-  :ensure t)
 
 (defun org-count-words-selection ()
   (interactive)
@@ -132,10 +161,6 @@
   :hook ((LaTeX-mode . turn-on-reftex)
          (LaTeX-mode . visual-line-mode)))
 
-(use-package typst-ts-mode
-  :ensure t
-  :hook (typst-ts-mode . visual-line-mode))
-
 (use-package rust-mode
   :ensure t)
 
@@ -157,13 +182,7 @@
 
 ;; TreeSitter
 (setq treesit-language-source-alist
-      '((json "https://github.com/tree-sitter/tree-sitter-json")
-       (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-       (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-       (vue "https://github.com/ikatyang/tree-sitter-vue")
-       (css "https://github.com/tree-sitter/tree-sitter-css")
-       (c "https://github.com/tree-sitter/tree-sitter-c")
-       (typst "https://github.com/uben0/tree-sitter-typst")))
+      ')
 
 ;; Merlin
 (let ((opam-share (ignore-errors (car (process-lines "opam" "var"
@@ -183,34 +202,9 @@
     ;; and use one of its "OPSW" menus.
     ))
 
-(defun my-eshell-remove-pcomplete ()
-  (remove-hook 'completion-at-point-functions #'pcomplete-completions-at-point t))
-
-(defun my-eshell-add-pcomplete ()
-  (add-hook 'completion-at-point-functions #'pcomplete-completions-at-point nil t))
-
-(defun my-eshell-toggle-pcomplete ()
-  (interactive)
-  (if pcomplete-turned-on
-      (progn
-        (my-eshell-remove-pcomplete)
-        (setq-local pcomplete-turned-on nil)
-        (message "Turned off pcomplete"))
-    (progn
-      (my-eshell-add-pcomplete)
-      (setq-local pcomplete-turned-on t)
-      (message "Turned on pcomplete"))))
-
-;; For some reason, pcomplete triest to rewrite eshell subcommands, so typing e.g.
-;; { echo "a" } will insert "a" into the shell. While that one is just annoying, it
-;; actually ends up breaking the shell when the subcommand inside blocks expecting
-;; input, like it happened to me when using { wc $file -l } before $file had a value.
-;; I haven't figured out how to disable that behaviour but this at least lets me toggle
-;; it when I know I will be using subcommands
-(add-hook 'eshell-mode-hook
-          (lambda ()
-            (setq-local pcomplete-turned-on t)
-            (keymap-local-set "C-c a" #'my-eshell-toggle-pcomplete)))
+(add-hook 'eshell-mode-hook (lambda ()
+                              (setq-local corfu-auto nil)
+                              (corfu-mode)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -238,7 +232,7 @@
    '("~/Documents/school/ipcv/home_assignment/main.org" "/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
-   '(rust-mode typst-ts-mode opam-switch-mode auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode company neotree kaolin-themes php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
+   '(rust-mode typst-ts-mode opam-switch-mode auctex ess solo-jazz-theme web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode neotree kaolin-themes php-mode treemacs-evil treemacs magit modus-themes tuareg evil))
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
