@@ -1,3 +1,5 @@
+(tool-bar-mode -1)
+
 ;; Package Functionality
 (require 'package)
 (setq use-package-compute-statistics t)
