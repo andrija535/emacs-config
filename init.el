@@ -1,5 +1,6 @@
 ;; Package Functionality
 (require 'package)
+(setq use-package-compute-statistics t)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
 
@@ -13,28 +14,29 @@
   :ensure t
   :config (evil-mode 1))
 (use-package tuareg
-  :commands (tuareg-mode)
-  :ensure t)
+  :ensure t
+  :commands tuareg-mode)
 (use-package opam-switch-mode
   :after tuareg
   :ensure t)
 (use-package modus-themes
   :ensure t)
 (use-package magit
-  :ensure t)
+  :ensure t
+  :commands magit)
 (use-package kaolin-themes
   :ensure t)
 
 ;; Treesitter
 (use-package json-ts-mode
-  :commands (json-ts-mode)
-  :ensure t)
+  :ensure t
+  :commands json-ts-mode)
 (use-package typescript-ts-mode
-  :commands (typescript-ts-mode)
-  :ensure t)
+  :ensure t
+  :commands typescript-ts-mode)
 (use-package typst-ts-mode
   :ensure t
-  :commands (typst-ts-mode)
+  :commands typst-ts-mode
   :config (add-hook 'typst-ts-mode-hook visual-line-mode))
 
 (use-package treesit
@@ -71,7 +73,7 @@
   :ensure t
   :config (global-corfu-mode))
 (use-package exec-path-from-shell
-  :ensure t
+  :disabled
   :config
   (exec-path-from-shell-initialize))
 (use-package pyvenv
@@ -163,12 +165,12 @@
   (load-theme 'solo-jazz t))
 
 (use-package ess
-  :commands ess-mode
-  :ensure t)
+  :ensure t
+  :commands ess-mode)
 
 (use-package auctex
   :ensure t
-  :commands (LaTeX-mode)
+  :commands LaTeX-mode
   :config (progn
             (setq-default TeX-master nil)
             (add-hook 'LaTeX-mode-hook (lambda ()
@@ -176,8 +178,8 @@
                                          (visual-line-mode)))))
 
 (use-package rust-mode
-  :commands (rust-mode)
-  :ensure t)
+  :ensure t
+  :commands rust-mode)
 
 ;; Custom options
 (setq-default indent-tabs-mode nil)
