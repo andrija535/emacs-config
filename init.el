@@ -37,7 +37,7 @@
 (use-package typst-ts-mode
   :ensure t
   :commands typst-ts-mode
-  :config (add-hook 'typst-ts-mode-hook visual-line-mode))
+  :config (add-hook 'typst-ts-mode-hook #'visual-line-mode))
 
 (use-package treesit
   :mode (("\\.tsx\\'" . tsx-ts-mode)
@@ -52,7 +52,7 @@
   (defun setup-treesitter ()
     (interactive)
     (dolist (grammar
-             ((json "https://github.com/tree-sitter/tree-sitter-json")
+             '((json "https://github.com/tree-sitter/tree-sitter-json")
               (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
               (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
               (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
@@ -81,7 +81,7 @@
 
 ;; Set appropriate colour scheme on startup
 
-(defcustom default-dark-theme 'kaolin-aurora "Default dark theme to use for example with auto-dark mode but also on startup")
+(defcustom default-dark-theme 'modus-vivendi-tinted "Default dark theme to use for example with auto-dark mode but also on startup")
 (defcustom default-light-theme 'modus-operandi-tinted "Default light theme to use for example with auto-dark mode but also on startup")
 
 (defun set-startup-colour-scheme ()
@@ -124,7 +124,7 @@
             (org-babel-do-load-languages
              'org-babel-load-languages
              '((python t)))
-            (add-hook 'org-mode-hook visual-line-mode))
+            (add-hook 'org-mode-hook #'visual-line-mode))
   :bind (:map org-mode-map
               ("C-c b i" . insert-babel-code-block)
               ("C-c w c" . org-count-words-selection)))
