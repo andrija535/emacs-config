@@ -46,10 +46,10 @@
 
 (use-package treesit
   :mode (("\\.tsx\\'" . tsx-ts-mode)
-         ("\\.js\\'"  . typescript-ts-mode)
-         ("\\.mjs\\'" . typescript-ts-mode)
+         ("\\.js\\'"  . js-ts-mode)
+         ("\\.mjs\\'" . js-ts-mode)
          ("\\.mts\\'" . typescript-ts-mode)
-         ("\\.cjs\\'" . typescript-ts-mode)
+         ("\\.cjs\\'" . js-ts-mode)
          ("\\.ts\\'"  . typescript-ts-mode)
          ("\\.jsx\\'" . tsx-ts-mode)
          ("\\.json\\'" .  json-ts-mode)
@@ -183,6 +183,12 @@
   :ensure t
   :commands rust-mode)
 
+(defun open-terminal-in-current-dired-dir ()
+  (interactive)
+  (async-shell-command (format "kitty %s" dired-directory)))
+
+(add-hook 'dired-mode-hook (lambda () (keymap-local-set "C-c t" #'open-terminal-in-current-dired-dir)))
+
 ;; Custom options
 (setq-default indent-tabs-mode nil)
 (keymap-global-set "C-c l" #'default-code-layout)
@@ -243,7 +249,7 @@
    '("~/Documents/school/ipcv/home_assignment/main.org" "/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
-   '(doom-themes simple-modeline rust-mode typst-ts-mode opam-switch-mode auctex ess web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode neotree php-mode treemacs-evil treemacs magit tuareg evil))
+   '(doom-themes simple-modeline rust-mode typst-ts-mode opam-switch-mode auctex ess web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode neotree php-mode magit tuareg evil))
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
