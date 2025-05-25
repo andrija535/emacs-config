@@ -32,6 +32,9 @@
 (use-package doom-themes
   :ensure t)
 
+(use-package dockerfile-mode
+  :ensure t)
+
 ;; Treesitter
 (use-package json-ts-mode
   :ensure t
@@ -161,10 +164,12 @@
 
 (use-package eglot
   :ensure t
-  :hook (typescript-ts-mode . eglot-ensure)
+  :hook ((typescript-ts-mode . eglot-ensure)
+         (js-ts-mode . eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs
-               '((typescript-ts-mode) "typescript-language-server" "--stdio")))
+               '((typescript-ts-mode) "typescript-language-server" "--stdio")
+               '((js-ts-mode) "typescript-language-server" "--stdio")))
 
 (use-package ess
   :ensure t
@@ -250,7 +255,7 @@
    '("~/Documents/school/ipcv/home_assignment/main.org" "/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
-   '(doom-themes simple-modeline rust-mode typst-ts-mode opam-switch-mode auctex ess web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode neotree php-mode magit tuareg evil))
+   '(dockerfile-mode docker doom-themes simple-modeline rust-mode typst-ts-mode opam-switch-mode auctex ess web-mode org-roam auto-dark pyvenv exec-path-from-shell haskell-mode neotree php-mode magit tuareg evil))
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory . "/home/andrija/Documents/school/dissertation/notes/")))
