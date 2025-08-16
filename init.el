@@ -207,6 +207,9 @@
   :commands docker
   :bind ("C-c d" . docker))
 
+(use-package exec-path-from-shell
+  :ensure t)
+
 (defun open-terminal-in-current-dired-dir ()
   (interactive)
   (async-shell-command (format "kitty %s" dired-directory)))
