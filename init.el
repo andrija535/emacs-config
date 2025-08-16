@@ -62,7 +62,8 @@
          ("\\.ts\\'"  . typescript-ts-mode)
          ("\\.jsx\\'" . tsx-ts-mode)
          ("\\.json\\'" .  json-ts-mode)
-         ("\\.py\\'" . python-ts-mode))
+         ("\\.py\\'" . python-ts-mode)
+         ("\\.yml\\'" . yaml-ts-mode))
   :preface
   (defun setup-treesitter ()
     (interactive)
