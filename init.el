@@ -201,6 +201,11 @@
   :commands dart-mode
   :mode ("\\.dart\\'" . dart-mode))
 
+(use-package docker
+  :ensure t
+  :commands docker
+  :bind ("C-c d" . docker))
+
 (defun open-terminal-in-current-dired-dir ()
   (interactive)
   (async-shell-command (format "kitty %s" dired-directory)))
