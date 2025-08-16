@@ -19,7 +19,10 @@
   :config (evil-mode 1))
 (use-package tuareg
   :ensure t
-  :commands tuareg-mode)
+  :commands tuareg-mode
+  :mode (
+         ("dune-project" . lisp-mode)
+         ("dune" . lisp-mode)))
 (use-package reason-mode
   :ensure t
   :mode "\\.re\\'")
