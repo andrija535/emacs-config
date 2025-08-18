@@ -8,35 +8,71 @@
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
 
-;; Eshell
-(add-hook 'eshell-mode-hook (lambda ()
-                              (setq-local corfu-auto nil)
-                              (corfu-mode)))
-
-;; Packages
+;; Vim bindings
 (use-package evil
   :ensure t
   :config (evil-mode 1))
+
+;; Language modes
 (use-package tuareg
   :ensure t
   :commands tuareg-mode
   :mode (
          ("dune-project" . lisp-mode)
          ("dune" . lisp-mode)))
+
 (use-package reason-mode
   :ensure t
   :mode "\\.re\\'")
+
+(use-package web-mode
+  :ensure t
+  :mode (("\\.php\\'" . web-mode)))
+
+(use-package ess
+  :ensure t
+  :commands ess-mode)
+
+(use-package auctex
+  :ensure t
+  :commands LaTeX-mode
+  :config (progn
+            (setq-default TeX-master nil)
+            (add-hook 'LaTeX-mode-hook (lambda ()
+                                         (turn-on-reftex)
+                                         (visual-line-mode)))))
+
+(use-package rust-mode
+  :ensure t
+  :commands rust-mode)
+
+(use-package dart-mode
+  :ensure t
+  :commands dart-mode
+  :mode ("\\.dart\\'" . dart-mode))
+
+;; Allows to change switch for the Emacs session
 (use-package opam-switch-mode
   :after tuareg
   :ensure t)
+
+;; Git client
 (use-package magit
   :ensure t
   :commands magit)
+
 (use-package simple-modeline
   :ensure t
   :hook after-init)
+
 (use-package doom-themes
   :ensure t)
+
+;; Docker
+(use-package docker
+  :ensure t
+  :commands docker
+  :bind ("C-c d" . docker))
 
 (use-package dockerfile-mode
   :ensure t)
@@ -45,9 +81,11 @@
 (use-package json-ts-mode
   :ensure t
   :commands json-ts-mode)
+
 (use-package typescript-ts-mode
   :ensure t
   :commands typescript-ts-mode)
+
 (use-package typst-ts-mode
   :ensure t
   :commands typst-ts-mode
@@ -74,7 +112,6 @@
               (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
               (vue "https://github.com/ikatyang/tree-sitter-vue")
               (css "https://github.com/tree-sitter/tree-sitter-css")
-              (c "https://github.com/tree-sitter/tree-sitter-c")
               (typst "https://github.com/uben0/tree-sitter-typst")
               (python "https://github.com/tree-sitter/tree-sitter-python")
               (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
@@ -87,21 +124,33 @@
 
 (setq tab-always-indent 'complete)
 
+;; Autocompletion and suggestions
 (use-package corfu
   :ensure t
-  :config (global-corfu-mode))
+  :config (progn
+            (global-corfu-mode)
+            ;; Eshell
+            (add-hook 'eshell-mode-hook (lambda ()
+                                          (setq-local corfu-auto nil)
+                                          (corfu-mode)))))
+
 (use-package exec-path-from-shell
-  :disabled
   :config
   (exec-path-from-shell-initialize))
+
+;; Python virtual environments, mostly for Babel
 (use-package pyvenv
   :ensure t)
+
+(setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i --simple-prompt")
 
 ;; Set appropriate colour scheme on startup
 
 (defcustom default-dark-theme 'doom-outrun-electric "Default dark theme to use for example with auto-dark mode but also on startup")
-(defcustom default-light-theme 'doom-bluloco-light "Default light theme to use for example with auto-dark mode but also on startup")
+(defcustom default-light-theme 'doom-nova  "Default light theme to use for example with auto-dark mode but also on startup")
 
+;; Syncs with Linux theme on startup
 (defun set-startup-colour-scheme ()
   (let
       ((is-dark (eq 1 (caar (dbus-ignore-errors
@@ -118,58 +167,53 @@
 (setq custom-safe-themes t)
 (add-hook 'after-init-hook #'set-startup-colour-scheme)
 
+;; Automatically sync with system theme
 (use-package auto-dark
   :ensure t
   :config (progn
             (set-variable 'auto-dark-themes (list (list default-dark-theme) (list default-light-theme)))
+            (setq
+             auto-dark-allow-osascript t
+             auto-dark-detection-method 'osascript)
             (auto-dark-mode)))
 
-(defun org-count-words-selection ()
-  (interactive)
-  (let ((b (region-beginning))
-        (e (region-end)))
-    (message (format "%d" (length (split-string (buffer-substring b e)))))))
-
-(defun insert-babel-code-block (language session)
-  (interactive "MLanguage: \nMSession: ")
-  (save-excursion
-    (if (not (string= session ""))
-        (insert (format "#+BEGIN_SRC %s :session %s\n\n#+END_SRC" language session))
-      (insert (format "#+BEGIN_SRC %s\n\n#+END_SRC" language)))))
-
 (use-package org
+  :preface 
+  (defun insert-babel-code-block (language session)
+    (interactive "MLanguage: \nMSession: ")
+    (save-excursion
+      (if (not (string= session ""))
+          (insert (format "#+BEGIN_SRC %s :session %s\n\n#+END_SRC" language session))
+        (insert (format "#+BEGIN_SRC %s\n\n#+END_SRC" language)))))
   :config (progn
             (org-babel-do-load-languages
              'org-babel-load-languages
              '((python t)))
             (add-hook 'org-mode-hook #'visual-line-mode))
   :bind (:map org-mode-map
-              ("C-c b i" . insert-babel-code-block)
-              ("C-c w c" . org-count-words-selection)))
+              ("C-c b i" . insert-babel-code-block)))
   
-(defun init-org-roam-dir ()
-  (let ((org-roam-default-directory (file-truename "~/org-roam")))
-    (progn
-      ;; Create org-roam directory if it doesn't already exist
-      (if
-          (not (file-exists-p org-roam-default-directory))
-          (make-directory org-roam-default-directory))
-      ;; Set it as default
-      (setq org-roam-directory org-roam-default-directory)
-      ;; Turn on autosync mode, if we don't do the above it crashes on startup
-      (org-roam-db-autosync-mode))))
-
+;; Knowledge network org-mode extension
 (use-package org-roam
   :ensure t
+  :preface
+  (defun init-org-roam-dir ()
+    (let ((org-roam-default-directory (file-truename "~/org-roam")))
+      (progn
+        ;; Create org-roam directory if it doesn't already exist
+        (if
+            (not (file-exists-p org-roam-default-directory))
+            (make-directory org-roam-default-directory))
+        ;; Set it as default
+        (setq org-roam-directory org-roam-default-directory)
+        ;; Turn on autosync mode, if we don't do the above it crashes on startup
+        (org-roam-db-autosync-mode))))
   :init #'init-org-roam-dir
   :bind (:map org-mode-map
               ("C-c n f" . org-roam-node-find)
               ("C-c n i" . org-roam-node-insert)))
 
-(use-package web-mode
-  :ensure t
-  :mode (("\\.php\\'" . web-mode)))
-
+;; LSP
 (use-package eglot
   :ensure t
   :hook ((typescript-ts-mode . eglot-ensure)
@@ -180,48 +224,9 @@
                '((typescript-ts-mode js-ts-mode) "typescript-language-server" "--stdio")
                '(dart-mode "dart" "language-server")))
 
-(use-package ess
-  :ensure t
-  :commands ess-mode)
-
-(use-package auctex
-  :ensure t
-  :commands LaTeX-mode
-  :config (progn
-            (setq-default TeX-master nil)
-            (add-hook 'LaTeX-mode-hook (lambda ()
-                                         (turn-on-reftex)
-                                         (visual-line-mode)))))
-
-(use-package rust-mode
-  :ensure t
-  :commands rust-mode)
-
-(use-package dart-mode
-  :ensure t
-  :commands dart-mode
-  :mode ("\\.dart\\'" . dart-mode))
-
-(use-package docker
-  :ensure t
-  :commands docker
-  :bind ("C-c d" . docker))
-
-(use-package exec-path-from-shell
-  :ensure t)
-
-(defun open-terminal-in-current-dired-dir ()
-  (interactive)
-  (async-shell-command (format "kitty %s" dired-directory)))
-
-(add-hook 'dired-mode-hook (lambda () (keymap-local-set "C-c t" #'open-terminal-in-current-dired-dir)))
-
 ;; Custom options
 (setq-default indent-tabs-mode nil)
 (keymap-global-set "C-c l" #'default-code-layout)
-
-(setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i --simple-prompt")
 
 ;; For ocamlrpc
 ;; Condition case because this breaks every time I updated emacs and it was
@@ -263,7 +268,19 @@
  '(c-ts-mode-indent-offset 4)
  '(custom-enabled-themes '(kaolin-temple))
  '(custom-safe-themes
-   '("9e36779f5244f7d715d206158a3dade839d4ccb17f6a2f0108bf8d476160a221"
+   '("b99ff6bfa13f0273ff8d0d0fd17cc44fab71dfdc293c7a8528280e690f084ef0"
+     "5c8a1b64431e03387348270f50470f64e28dfae0084d33108c33a81c1e126ad6"
+     "0f1341c0096825b1e5d8f2ed90996025a0d013a0978677956a9e61408fcd2c77"
+     "2ab8cb6d21d3aa5b821fa638c118892049796d693d1e6cd88cb0d3d7c3ed07fc"
+     "5c7720c63b729140ed88cf35413f36c728ab7c70f8cd8422d9ee1cedeb618de5"
+     "87fa3605a6501f9b90d337ed4d832213155e3a2e36a512984f83e847102a42f4"
+     "3f24dd8f542f4aa8186a41d5770eb383f446d7228cd7a3413b9f5e0ec0d5f3c0"
+     "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0"
+     "b7a09eb77a1e9b98cafba8ef1bd58871f91958538f6671b22976ea38c2580755"
+     "e1df746a4fa8ab920aafb96c39cd0ab0f1bac558eff34532f453bd32c687b9d6"
+     "dfb1c8b5bfa040b042b4ef660d0aab48ef2e89ee719a1f24a4629a0c5ed769e8"
+     "22a0d47fe2e6159e2f15449fcb90bbf2fe1940b185ff143995cc604ead1ea171"
+     "9e36779f5244f7d715d206158a3dade839d4ccb17f6a2f0108bf8d476160a221"
      "7ec8fd456c0c117c99e3a3b16aaf09ed3fb91879f6601b1ea0eeaee9c6def5d9"
      "e14884c30d875c64f6a9cdd68fe87ef94385550cab4890182197b95d53a7cf40"
      "691d671429fa6c6d73098fc6ff05d4a14a323ea0a18787daeb93fde0e48ab18b"
@@ -346,8 +363,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight regular :height 120 :width normal)))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#3c4c55" :foreground "#c5d4dd" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 150 :width normal :foundry "nil" :family "Helvetica")))))
 (put 'dired-find-alternate-file 'disabled nil)
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+(if (file-exists-p "~/.emacs.d/opam-user-setup.el")
+    ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+    (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+  ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+  )
