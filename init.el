@@ -25,10 +25,6 @@
   :ensure t
   :mode "\\.re\\'")
 
-(use-package web-mode
-  :ensure t
-  :mode (("\\.php\\'" . web-mode)))
-
 (use-package ess
   :ensure t
   :commands ess-mode)
@@ -50,6 +46,10 @@
   :ensure t
   :commands dart-mode
   :mode ("\\.dart\\'" . dart-mode))
+
+(use-package php-mode
+  :ensure t
+  :mode ("\\.php\\'" . php-mode))
 
 ;; Allows to change switch for the Emacs session
 (use-package opam-switch-mode
@@ -218,11 +218,14 @@
   :ensure t
   :hook ((typescript-ts-mode . eglot-ensure)
          (js-ts-mode . eglot-ensure)
-         (dart-mode . eglot-ensure))
+         (dart-mode . eglot-ensure)
+         (php-mode . eglot-ensure))
   :config
-  (add-to-list 'eglot-server-programs
-               '((typescript-ts-mode js-ts-mode) "typescript-language-server" "--stdio")
-               '(dart-mode "dart" "language-server")))
+  (dolist
+      (lspconfig
+       '(((typescript-ts-mode js-ts-mode) . ("typescript-language-server" "--stdio"))
+         (php-mode . ("intelephense" "--stdio"))))
+    (add-to-list 'eglot-server-programs lspconfig)))
 
 ;; Custom options
 (setq-default indent-tabs-mode nil)
