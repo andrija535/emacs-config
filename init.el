@@ -146,38 +146,6 @@
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i --simple-prompt")
 
-;; Set appropriate colour scheme on startup
-
-(defcustom default-dark-theme 'doom-outrun-electric "Default dark theme to use for example with auto-dark mode but also on startup")
-(defcustom default-light-theme 'doom-nova  "Default light theme to use for example with auto-dark mode but also on startup")
-
-;; Syncs with Linux theme on startup
-(defun set-startup-colour-scheme ()
-  (let
-      ((is-dark (eq 1 (caar (dbus-ignore-errors
-                              (dbus-call-method
-                               :session
-                               "org.freedesktop.portal.Desktop"
-                               "/org/freedesktop/portal/desktop"
-                               "org.freedesktop.portal.Settings" "Read"
-                               "org.freedesktop.appearance" "color-scheme")))))
-       (enabled-themes custom-enabled-themes))
-    (load-theme (if is-dark default-dark-theme default-light-theme) t)
-    (dolist (theme enabled-themes) (disable-theme theme))))
-
-(setq custom-safe-themes t)
-(add-hook 'after-init-hook #'set-startup-colour-scheme)
-
-;; Automatically sync with system theme
-(use-package auto-dark
-  :ensure t
-  :config (progn
-            (set-variable 'auto-dark-themes (list (list default-dark-theme) (list default-light-theme)))
-            (setq
-             auto-dark-allow-osascript t
-             auto-dark-detection-method 'osascript)
-            (auto-dark-mode)))
-
 (use-package org
   :preface 
   (defun insert-babel-code-block (language session)
@@ -272,7 +240,15 @@
  '(c-ts-mode-indent-offset 4)
  '(custom-enabled-themes '(kaolin-temple))
  '(custom-safe-themes
-   '("b99ff6bfa13f0273ff8d0d0fd17cc44fab71dfdc293c7a8528280e690f084ef0"
+   '("21d2bf8d4d1df4859ff94422b5e41f6f2eeff14dd12f01428fa3cb4cb50ea0fb"
+     "d97ac0baa0b67be4f7523795621ea5096939a47e8b46378f79e78846e0e4ad3d"
+     "5244ba0273a952a536e07abaad1fdf7c90d7ebb3647f36269c23bfd1cf20b0b8"
+     "599f72b66933ea8ba6fce3ae9e5e0b4e00311c2cbf01a6f46ac789227803dd96"
+     "dfcd2b13f10da4e5e26eb1281611e43a134d4400b06661445e7cbb183c47d2ec"
+     "8c7e832be864674c220f9a9361c851917a93f921fedb7717b1b5ece47690c098"
+     "83550d0386203f010fa42ad1af064a766cfec06fc2f42eb4f2d89ab646f3ac01"
+     "9b9d7a851a8e26f294e778e02c8df25c8a3b15170e6f9fd6965ac5f2544ef2a9"
+     "b99ff6bfa13f0273ff8d0d0fd17cc44fab71dfdc293c7a8528280e690f084ef0"
      "5c8a1b64431e03387348270f50470f64e28dfae0084d33108c33a81c1e126ad6"
      "0f1341c0096825b1e5d8f2ed90996025a0d013a0978677956a9e61408fcd2c77"
      "2ab8cb6d21d3aa5b821fa638c118892049796d693d1e6cd88cb0d3d7c3ed07fc"
@@ -349,7 +325,11 @@
    '("~/Documents/school/ipcv/home_assignment/main.org"
      "/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(auctex corfu dart-mode docker dockerfile-mode doom-themes ess evil
+            exec-path-from-shell magit opam-switch-mode org-roam
+            php-mode pyvenv reason-mode rust-mode simple-modeline
+            tuareg typst-ts-mode web-mode))
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory
@@ -358,15 +338,15 @@
  '(typescript-ts-mode-indent-offset 2)
  '(typst-ts-mode-indent-offset 2)
  '(web-mode-code-indent-offset 2))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#3c4c55" :foreground "#c5d4dd" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 150 :width normal :foundry "nil" :family "Helvetica")))))
 (put 'dired-find-alternate-file 'disabled nil)
 (if (file-exists-p "~/.emacs.d/opam-user-setup.el")
     ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
     (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
   ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
   )
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
