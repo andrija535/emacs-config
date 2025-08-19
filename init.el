@@ -135,6 +135,7 @@
                                           (corfu-mode)))))
 
 (use-package exec-path-from-shell
+  :ensure t
   :config
   (exec-path-from-shell-initialize))
 
@@ -348,11 +349,7 @@
    '("~/Documents/school/ipcv/home_assignment/main.org"
      "/home/andrija/agenda.org"))
  '(org-confirm-babel-evaluate nil)
- '(package-selected-packages
-   '(auctex auto-dark dart-mode docker dockerfile-mode doom-themes ess
-            evil exec-path-from-shell haskell-mode magit neotree
-            opam-switch-mode org-roam php-mode pyvenv reason-mode
-            rust-mode simple-modeline tuareg typst-ts-mode web-mode))
+ '(package-selected-packages nil)
  '(python-indent-offset 2)
  '(safe-local-variable-values
    '((org-roam-directory
