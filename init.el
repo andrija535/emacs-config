@@ -16,7 +16,10 @@
 ;; Vim bindings
 (use-package evil
   :ensure t
-  :config (evil-mode 1))
+  :config (progn
+            (evil-mode 1)
+            (with-eval-after-load 'evil-maps
+              (define-key evil-motion-state-map (kbd "RET") nil))))
 
 ;; Language modes
 (use-package tuareg
@@ -174,13 +177,12 @@
             (not (file-exists-p org-roam-default-directory))
             (make-directory org-roam-default-directory))
         ;; Set it as default
-        (setq org-roam-directory org-roam-default-directory)
-        ;; Turn on autosync mode, if we don't do the above it crashes on startup
-        (org-roam-db-autosync-mode))))
-  :init #'init-org-roam-dir
-  :bind (:map org-mode-map
-              ("C-c n f" . org-roam-node-find)
-              ("C-c n i" . org-roam-node-insert)))
+        (setq org-roam-directory org-roam-default-directory))))
+  :init (init-org-roam-dir)
+  :config (org-roam-db-autosync-enable)
+  :bind (("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n l" . org-roam-buffer-toggle)))
 
 ;; LSP
 (use-package eglot
