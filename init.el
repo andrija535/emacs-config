@@ -8,6 +8,11 @@
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns x))
+  :config (exec-path-from-shell-initialize))
+
 ;; Vim bindings
 (use-package evil
   :ensure t
@@ -134,11 +139,6 @@
                                           (setq-local corfu-auto nil)
                                           (corfu-mode)))))
 
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
-
 ;; Python virtual environments, mostly for Babel
 (use-package pyvenv
   :ensure t)
@@ -238,9 +238,13 @@
    '((c-mode . "bsd") (java-mode . "java") (awk-mode . "awk")
      (csharp-mode . "csharp") (other . "gnu")))
  '(c-ts-mode-indent-offset 4)
- '(custom-enabled-themes '(kaolin-temple))
+ '(custom-enabled-themes '(doom-dracula))
  '(custom-safe-themes
-   '("21d2bf8d4d1df4859ff94422b5e41f6f2eeff14dd12f01428fa3cb4cb50ea0fb"
+   '("fffef514346b2a43900e1c7ea2bc7d84cbdd4aa66c1b51946aade4b8d343b55a"
+     "088cd6f894494ac3d4ff67b794467c2aa1e3713453805b93a8bcb2d72a0d1b53"
+     "dd4582661a1c6b865a33b89312c97a13a3885dc95992e2e5fc57456b4c545176"
+     "4990532659bb6a285fee01ede3dfa1b1bdf302c5c3c8de9fad9b6bc63a9252f7"
+     "21d2bf8d4d1df4859ff94422b5e41f6f2eeff14dd12f01428fa3cb4cb50ea0fb"
      "d97ac0baa0b67be4f7523795621ea5096939a47e8b46378f79e78846e0e4ad3d"
      "5244ba0273a952a536e07abaad1fdf7c90d7ebb3647f36269c23bfd1cf20b0b8"
      "599f72b66933ea8ba6fce3ae9e5e0b4e00311c2cbf01a6f46ac789227803dd96"
